@@ -2,4 +2,5 @@ def palindroom(woord):
     return woord == woord[::-1]
 
 
-print(palindroom("lepel"))
+input = input("Woord: ")
+print("Het woord ({}) is een palindroom: {}".format(input, palindroom(input)))
