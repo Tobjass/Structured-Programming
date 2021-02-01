@@ -1,0 +1,12 @@
+def veelvouden(getal):
+    if getal % 3 == 0 and getal % 5 == 0:
+        return "fizzbuzz"
+    elif getal % 3 == 0:
+        return "fizz"
+    elif getal % 5 == 0:
+        return "buzz"
+    return getal
+
+
+for i in range(1, 100):
+    print(veelvouden(i))
