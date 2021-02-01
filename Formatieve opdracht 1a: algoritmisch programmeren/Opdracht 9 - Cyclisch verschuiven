@@ -1,0 +1,5 @@
+def cyclisch_verschuiven(ch, n):
+    return "".join(ch[n:] + ch[:n])
+
+
+print(cyclisch_verschuiven(list(input("Ch: ")), int(input("N: "))))
