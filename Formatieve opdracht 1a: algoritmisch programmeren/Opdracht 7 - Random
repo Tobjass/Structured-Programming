@@ -1,0 +1,11 @@
+import random
+
+getal = random.randint(1, 10)
+pogingen = 1
+while True:
+    if getal == int(input("Welk getal? ")):
+        print("Na {} poging(en) goed gegokt!".format(pogingen))
+        break
+    else:
+        print("Fout! Probeer het opnieuw")
+        pogingen += 1
