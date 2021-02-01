@@ -1,0 +1,17 @@
+alfabet = ['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', 'g', 'G', 'h', 'H', 'i', 'I', 'j', 'J', 'k', 'K',
+           'l', 'L', 'm', 'M', 'n', 'N', 'o', 'O', 'p', 'P', 'q', 'Q', 'r', 'R', 's', 'S', 't', 'T', 'u', 'U', 'v', 'V',
+           'w', 'W', 'x', 'X', 'y', 'Y', 'z', 'Z']
+tekens = [' ', '!', '?', '#', '.', ',', '/', '&', '*', '@', '(', ')']
+
+
+def caesar(tekst, rotatie):
+    caesarcode = []
+    for i in range(0, len(tekst)):
+        if tekst[i] in tekens:
+            caesarcode.append(tekens[tekens.index(tekst[i])])
+        else:
+            caesarcode.append(alfabet[alfabet.index(tekst[i]) + rotatie*2])
+    return "".join(caesarcode)
+
+
+print("Caesarcode: {}".format(caesar(list(input("Geef een tekst: ")), int(input("Geef een rotatie: ")))))
