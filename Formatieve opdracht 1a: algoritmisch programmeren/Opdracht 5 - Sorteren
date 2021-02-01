@@ -1,0 +1,12 @@
+def sort(lijst):
+    gesorteerde_lijst = lijst.copy()
+    for index in range(0, len(gesorteerde_lijst) - 1):
+        waarde = lijst[index+1]
+        while waarde < gesorteerde_lijst[index] and index >= 0:
+            gesorteerde_lijst[index + 1] = gesorteerde_lijst[index]
+            index -= 1
+        gesorteerde_lijst[index + 1] = waarde
+    return gesorteerde_lijst
+
+
+print(sort(list(input("Lijst: "))))
