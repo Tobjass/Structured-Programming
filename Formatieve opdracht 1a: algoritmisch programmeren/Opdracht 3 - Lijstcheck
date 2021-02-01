@@ -1,0 +1,18 @@
+def count(lijst, getal):
+    return lijst.count(getal)
+
+
+def grootste_verschil(lijst):
+    verschillen = []
+    index = 0
+    while len(lijst) > index:
+        if (lijst[index] - lijst[index+1]) > (lijst[index+1] - lijst[index]):
+            verschillen.append(lijst[index] - lijst[index+1])
+        elif (lijst[index] - lijst[index+1]) < (lijst[index+1] - lijst[index]):
+            verschillen.append(lijst[index+1] - lijst[index])
+        index += 2
+    return max(verschillen)
+
+
+def eisen(lijst):
+    return count(lijst, 1) > count(lijst, 0), count(lijst, 0) < 12
