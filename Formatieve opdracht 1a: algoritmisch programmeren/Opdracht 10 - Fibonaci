@@ -1,0 +1,5 @@
+def fibonaci(n, tweeTerug=0, eenTerug=1):
+    return fibonaci(n-1, eenTerug, tweeTerug+eenTerug) if n > 1 else (tweeTerug, eenTerug)[n]
+
+
+print(fibonaci(int(input("Getal: "))))
