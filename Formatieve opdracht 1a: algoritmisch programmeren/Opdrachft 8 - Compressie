@@ -1,0 +1,15 @@
+def read():
+    file = open("Tekstbestand.txt", "r")
+    read = file.read()
+    file.close()
+    return read
+
+
+def compressie():
+    file = open("Tekstbestand.txt", "w")
+    file.write("")
+    file.close()
+    return read()
+
+
+print("Oorspronkelijke inhoud: {}\nHuidige inhoud: {}".format(read(), compressie()))
