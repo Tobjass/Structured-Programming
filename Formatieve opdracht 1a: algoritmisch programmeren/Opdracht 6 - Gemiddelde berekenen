@@ -1,0 +1,12 @@
+def gemiddelde(lijst):
+    totaal = 0
+    for i in range(0, len(lijst)):
+        totaal = totaal + lijst[i]
+    return totaal / len(lijst)
+
+
+def meerdere_gemiddeldes(lijsten):
+    gemiddeldes = []
+    for i in range(0, len(lijsten)):
+        gemiddeldes.append(gemiddelde(lijsten[i]))
+    return gemiddeldes
