@@ -1,0 +1,333 @@
+#BELANGRIJK OM CODE TE KUNNEN RUNNEN
+#Pip install pyautogui & sty
+#Installeer keybind | voor "clear all"
+#(Ctrl+alt+S -> Keymap -> Editor Actions -> Zoeken op "clear all" -> Add keyboard shortcut -> Shift+\ -> OK)
+import pyautogui
+from time import sleep
+from sty import fg, Style, RgbFg
+
+#Custom kleuren voor prints
+fg.grijs = Style(RgbFg(128, 96, 96))
+fg.rood = Style(RgbFg(255, 0, 0))
+fg.bruin = Style(RgbFg(102, 87, 51))
+fg.oranje = Style(RgbFg(255, 128, 0))
+fg.geel = Style(RgbFg(255, 242, 0))
+fg.groen = Style(RgbFg(0, 156, 8))
+fg.cyaan = Style(RgbFg(0, 135, 156))
+fg.blauw = Style(RgbFg(0, 85, 255))
+fg.paars = Style(RgbFg(150, 32, 200))
+fg.roze = Style(RgbFg(255, 25, 130))
+
+#Lijsten met kleuren
+Fg = [fg.grijs, fg.rood, fg.bruin, fg.oranje, fg.geel, fg.groen, fg.cyaan, fg.blauw, fg.paars, fg.roze]
+Kleuren = ['grijs', 'rood', 'bruin', 'oranje', 'geel', 'groen', 'cyaan', 'blauw', 'paars', 'roze']
+
+
+#While loop blijft lopen totdat het een random 4-cijferig getal zonder dubbele cijfers en nullen heeft
+def random():
+    import random
+
+    while True:
+        cijfers = random.randrange(1000, 10000)
+        if dubbeleCijferCheck(cijfers) == 4 and nullenCheck(cijfers) == 0:
+            break
+    return cijfers
+
+
+#Random getal tussen 1 en 10
+def randomGetal():
+    import random
+
+    return random.randrange(1, 10)
+
+
+#Omzetten van getal in kleur en andersom
+def kleuren(Input):
+    if type(Input) == int:
+        list_Input = list(str(Input))
+        for i in range(0, len(str(Input))):
+            kleur = Fg[int(list_Input[i])]
+            list_Input[i] = Kleuren[int(str(Input)[i])]
+        return kleur + "".join(list_Input) + fg.rs
+    elif type(Input) == list:
+        for i in range(0, len(Input)):
+            Input[i] = str(Kleuren.index(Input[i]))
+        return Input
+
+
+#Input controleren en feedback voorzien, de computer gebruikt alle variabelen, speler alleen Input, nummer, type en oudeSpelerInputs.
+def inputControleren(Input, nummer, type, computerGeheugen, niet_aanwezig, oudeComputerInputs, oudeSpelerInputs):
+    #Nummer omzetten naar string
+    nummer = str(nummer)
+
+    #Stop de code als de speler het al goed geraden heeft
+    if type == 0:
+        if Input == nummer:
+            return Input
+
+    #Lijst aanmaken voor aanwezig en goed
+    aanwezig = []
+    goed = []
+
+    #Input controleren, goed en aanwezig aan de lijsten toevoegen
+    for i in range(0, 4):
+        if Input[i] == nummer[i]:
+            goed.append(Input[i])
+            if type == 1:
+                #Goed in geheugen van computer toevoegen
+                computerGeheugen[i] = Input[i]
+        elif Input[i] != nummer[i] and Input[i] in nummer:
+            aanwezig.append(Input[i])
+
+    #Stop de code als alle 4 de cijfers goed zijn (goed geraden)
+    if len(goed) == 4:
+        print("\nGoed geraden!", end='')
+        return Input, computerGeheugen, niet_aanwezig, oudeComputerInputs
+    #Feedback printen
+    elif (len(goed) < 4 and len(goed) != 0) or (len(aanwezig) < 4 and len(aanwezig) != 0):
+        if len(goed) > 0:
+            if len(aanwezig) > 0:
+                print("\nNiet de goede kleurencombinatie. {} kleur(en) goed & {} kleur(en) aanwezig.\nGoed: ".format(len(goed), len(aanwezig)), end='')
+                for x in goed:
+                    print(kleuren(int(x)), end=' ')
+                print("\nAanwezig: ", end='')
+                for x in aanwezig:
+                    print(kleuren(int(x)), end=' ')
+            elif len(aanwezig) == 0:
+                print("\nNiet de goede kleurencombinatie. {} kleur(en) goed.\nGoed: ".format(len(goed)), end='')
+                for x in goed:
+                    print(kleuren(int(x)), end=' ')
+        elif len(goed) == 0:
+            print("\nNiet de goede kleurencombinatie. {} kleur(en) aanwezig.\nAanwezig: ".format(len(aanwezig)), end='')
+            for x in aanwezig:
+                print(kleuren(int(x)), end=' ')
+
+        #Oude inputs, goed en aanwezig in lijsten toevoegen om feedback te onthouden
+        if type == 0:
+            oudeSpelerInputs.append({'Input': Input, 'goed': goed, 'aanwezig': aanwezig})
+        elif type == 1:
+            oudeComputerInputs.append({'Input': Input, 'goed': goed, 'aanwezig': aanwezig})
+
+        #Getallen die niet aanwezig zijn onthouden
+        if type == 1:
+            for i in range(0, 4):
+                if computerGeheugen[i] == 'X' and Input[i] not in aanwezig:
+                    niet_aanwezig.append(Input[i])
+                elif Input[i] in goed:
+                    computerGeheugen[i] = Input[i]
+
+            Input = list(Input)
+
+            #Nieuwe getallen toevoegen
+            for i in range(0, 4):
+                if computerGeheugen[i] != 'X':
+                    continue
+                elif computerGeheugen[i] == 'X':
+                    if len(goed) + len(aanwezig) == 4:
+                        break
+                    elif Input[i] in niet_aanwezig or Input[i] in aanwezig:
+                        getalKiezen = 0
+                        #Blijven loopen totdat het een nieuw random getal wat niet eerder voorkwam is
+                        while True:
+                            getalKiezen += 1
+                            #Heel soms blijft de loop runnen, dit voorkomt het
+                            if getalKiezen > 8:
+                                Input[i] = '0'
+                                break
+                            else:
+                                if Input[i] in niet_aanwezig or Input[i] in aanwezig or Input[i] in Input[:i] or Input[i] in goed:
+                                    Input[i] = str(randomGetal())
+                                elif Input[i] not in niet_aanwezig and Input[i] not in aanwezig and Input[i] not in Input[:i] and Input[i] not in goed:
+                                    break
+
+            #Aanwezig op andere plek dan verkeerde plekken zetten
+            for i in range(0, len(aanwezig)):
+                for x in range(0, 4):
+                    #Vergelijken met oude inputs
+                    oude = []
+                    for y in range(0, len(oudeComputerInputs)):
+                        oude.append(oudeComputerInputs[y]['Input'][x])
+                    if computerGeheugen[x] != 'X' or aanwezig[i] in oude:
+                        continue
+                    elif computerGeheugen[x] == 'X':
+                        if Input[x] not in aanwezig or aanwezig[i] not in oude:
+                            Input[x] = aanwezig[i]
+                            break
+            return "".join(Input), computerGeheugen, niet_aanwezig, oudeComputerInputs
+
+    #Als de input helemaal niet overeen komt met de combinatie
+    elif len(goed) or len(aanwezig) == 0:
+        print("\nIngevoerde kleurencombinatie klopt helemaal niet.", end='')
+        if type == 1:
+            Input = str(random())
+        return Input, computerGeheugen, niet_aanwezig, oudeComputerInputs
+    else:
+        return Input, computerGeheugen, niet_aanwezig, oudeComputerInputs
+
+
+#Checken of er dubbele cijfers in de input zitten. Voegt cijfer aan de lijst toe als die er nog niet in zit. Als dit wel
+#het geval is stopt de loop en returnt ie een te korte lijst, wat aangeeft dat er een dubbel cijfer in zit
+def dubbeleCijferCheck(Input):
+    cijfers = []
+    for i in range(0, 4):
+        if str(Input)[i] in cijfers:
+            break
+        else:
+            cijfers.append(str(Input)[i])
+    return len(cijfers)
+
+
+#Checken of er een nul in de input zit. Voegt nul aan de lijst toe als die er in zit. Als er een nul in de lijst zit
+#bevat de input nullen
+def nullenCheck(Input):
+    nullen = []
+    for i in range(0, 4):
+        if int(str(Input)[i]) == 0:
+            nullen.append(str(Input)[i])
+    return len(nullen)
+
+
+#Geldige input invoeren
+def spelerInvoer(type):
+    #If-statement om dubbele code tegen te gaan
+    if type == 0:
+        tekst = "Geef een kleurencombinatie die de computer zal proberen te raden"
+    elif type == 1:
+        tekst = "\nProbeer de kleurencombinatie van de computer te raden"
+    #Deze loopt blijft oneindig lopen totdat er een geldige input is ingevoerd
+    while True:
+        try:
+            spelerInput = input("{}:\n>> ".format(tekst))
+            spelerKleuren = int("".join(kleuren(spelerInput.split())))
+        except ValueError:
+            print("Dat is geen geldige combinatie.", end='')
+            continue
+        if len(str(spelerKleuren)) > 4:
+            print("Die kleurencombinatie is te groot.", end='')
+        elif len(str(spelerKleuren)) < 4:
+            print("Die kleurencombinatie is te klein.", end='')
+        elif dubbeleCijferCheck(spelerKleuren) < 4:
+            print("Die kleurencombinatie bevat dubbele kleuren.", end='')
+        else:
+            if nullenCheck(spelerKleuren) > 0:
+                print("Die kleurencombinatie bevat grijs.", end='')
+            elif nullenCheck(spelerKleuren) == 0:
+                break
+    if type == 0:
+        print("\nGeldige kleurencombinatie! De wedstrijd begint!", end='')
+    return spelerKleuren
+
+
+#Laat beschikbare kleuren en hoe je moet invoeren zien (functie om dubbele code te voorkomen)
+def invoerUitleg():
+    print("Keuze uit de volgende kleuren:")
+    for i in range(1, 10):
+        print(kleuren(i) + fg.rs, end=' ')
+
+    print("\n\nVoer je keuze als volgt in:\n" + fg.grijs + "kleur kleur kleur kleur" + fg.rs)
+
+
+#Hoofd-functie die de andere functies aanstuurt
+def wedstrijd():
+    #Combinatie die de speler gaat raden
+    computerNummer = random()
+
+    invoerUitleg()
+
+    #Combinatie die de computer gaat raden
+    spelerNummer = spelerInvoer(0)
+
+    #Gegevens die onthouden moeten worden
+    geheugen = ['X', 'X', 'X', 'X']
+    oudeComputerInputs = []
+    oudeSpelerInputs = []
+    niet_aanwezig = []
+
+    spelerInput = 1
+
+    computerInput = str(random())
+
+    #Variable om gelijkspel mogelijk te maken
+    laatste_poging = 0
+
+    ronde = 1
+    while True:
+        #Scherm leegmaken
+        sleep(5)
+        pyautogui.hotkey('|')
+
+        print("Ronde {}:".format(ronde))
+        ronde += 1
+
+        #Info van computer tonen (visueel)
+        if int(computerInput) != int(spelerNummer) or int(computerInput) == int(spelerNummer):
+            print(fg.grijs + "\nINFORMATIE VAN COMPUTER" + fg.rs, end='')
+            if len(oudeComputerInputs) > 0:
+                print("\nVorige pogingen:")
+                for i in range(0, len(oudeComputerInputs)):
+                    for x in range(0, 4):
+                        print(kleuren(int(oudeComputerInputs[i]['Input'][x])), end=' ')
+                    if len(oudeComputerInputs[i]['goed']) > 0:
+                        print("   Goed: ", end='')
+                        for y in range(0, len(oudeComputerInputs[i]['goed'])):
+                            print(kleuren(int(oudeComputerInputs[i]['goed'][y])), end=' ')
+                    if len(oudeComputerInputs[i]['aanwezig']) > 0:
+                        print("   Aanwezig: ", end='')
+                        for y in range(0, len(oudeComputerInputs[i]['aanwezig'])):
+                            print(kleuren(int(oudeComputerInputs[i]['aanwezig'][y])), end=' ')
+                    print("")
+
+            print("\nPoging van de computer om jouw kleurencombinatie te raden:\n>> ", end='')
+            for x in computerInput:
+                print(kleuren(int(x)), end=' ')
+            print("")
+
+            #Nieuwe combinatie zoeken (algoritme)
+            computerInput, geheugen, niet_aanwezig, oudeComputerInputs = inputControleren(computerInput, spelerNummer, 1, geheugen, niet_aanwezig, oudeComputerInputs, 0)
+        #Info van speler tonen (visueel)
+        if int(spelerInput) != int(computerNummer) or int(computerInput) == int(spelerNummer):
+            print(fg.grijs + "\n\nINFORMATIE VAN SPELER" + fg.rs)
+
+            invoerUitleg()
+
+            if len(oudeSpelerInputs) > 0:
+                print("\nVorige pogingen:")
+                for i in range(0, len(oudeSpelerInputs)):
+                    for x in range(0, 4):
+                        print(kleuren(int(oudeSpelerInputs[i]['Input'][x])), end=' ')
+                    if len(oudeSpelerInputs[i]['goed']) > 0:
+                        print("   Goed: ", end='')
+                        for y in range(0, len(oudeSpelerInputs[i]['goed'])):
+                            print(kleuren(int(oudeSpelerInputs[i]['goed'][y])), end=' ')
+                    if len(oudeSpelerInputs[i]['aanwezig']) > 0:
+                        print("   Aanwezig: ", end='')
+                        for y in range(0, len(oudeSpelerInputs[i]['aanwezig'])):
+                            print(kleuren(int(oudeSpelerInputs[i]['aanwezig'][y])), end=' ')
+                    print("")
+
+            #Nieuwe poging laten invoeren
+            spelerInput = spelerInvoer(1)
+            #Feedback geven
+            inputControleren(str(spelerInput), computerNummer, 0, 0, 0, 0, oudeSpelerInputs)
+
+            #Checken of er al een combinatie geraden is
+            if (int(spelerInput) != int(computerNummer) and int(computerInput) == int(spelerNummer)) \
+                    or (int(spelerInput) == int(computerNummer) and int(computerInput) == int(spelerNummer)) \
+                    or (int(spelerInput) == int(computerNummer) and int(computerInput) != int(spelerNummer)):
+                if int(spelerInput) != int(computerNummer) and int(computerInput) == int(spelerNummer):
+                    #Laatste kans voor speler, computer heeft de combinatie namelijk al geraden
+                    if laatste_poging == 0:
+                        laatste_poging = 1
+                        continue
+                    elif laatste_poging == 1:
+                        print(fg.rood + "\n\n\nVerloren! De computer heeft jouw kleurencombinatie al geraden." + fg.rs)
+                #Als de speler de combinatie in de laatste poging goed heeft is het gelijkspel
+                elif int(spelerInput) == int(computerNummer) and int(computerInput) == int(spelerNummer):
+                    print("\nGoed geraden!" + fg.oranje + "\n\n\nGelijkspel!" + fg.rs)
+                #Als de speler de combinatie eerder dan de computer geraden heeft wint de speler
+                elif int(spelerInput) == int(computerNummer) and int(computerInput) != int(spelerNummer):
+                    print(fg.groen + "\n\nGewonnen!" + fg.rs)
+                break
+
+
+wedstrijd()
