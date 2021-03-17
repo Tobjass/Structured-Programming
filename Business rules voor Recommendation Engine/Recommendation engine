@@ -26,6 +26,12 @@ def soortgelijkProduct():
 
         cur.execute("insert into soortgelijkproduct (product_id, soortgelijk_id) values (%s, %s)",
                     (producten[0], recommendations))
+"""
+Producten in dezelfde category, sub_category en sub_sub_category toevoegen aan de database. Per product wordt er gekeken
+welke producten vergelijkbaar zijn. Er loopt een for loop die elk product langs gaat. Als de category,
+sub_category en sub_sub_category gelijk zijn aan het product dat getoond wordt op de 'website' zal het worden toegevoegd
+aan de recommendations. Uiteindelijk wordt de data naar de database doorgestuurd.
+"""
 
 
 def recommendationsAanmaken(productenlijst, type):
@@ -48,6 +54,12 @@ def recommendationsAanmaken(productenlijst, type):
         elif type == 2:
             cur.execute("insert into anderekochten (product_id, anderekochten_id) values (%s, %s)",
                         (producten[0], recommendations))
+"""
+Maakt recommendations voor andereBekeken of andereKochten aan. Deze wordt opgeroepen in de functies andereBekeken en 
+andereKochten. Ook hier wordt er per product een recommendation aangemaakt. Er wordt voor elk product dat eerder bekeken
+of gekocht is gekeken of het in dezelfde category, sub_category en sub_sub_category zit. Als dit het geval is wordt het
+aan de recommendations lijst toegevoegd. Uiteindelijk wordt de data naar de database doorgestuurd.
+"""
 
 
 def andereBekeken():
@@ -64,6 +76,13 @@ def andereBekeken():
             bekekenProducten.append(x[0][1:len(x[0])-1:])
 
     recommendationsAanmaken(bekekenProducten, 1)
+"""
+Maakt een lijst met alle eerder bekeken producten. De gegevens staan als strings in tuples in de database. Voor elke
+regel uit de database wordt er gekeken of er meer dan 2 producten bekeken zijn (bevat dan een komma). Als dit het geval
+is wordt de data zo gesplitst dat de ids los van elkaar in de lijst geplaatst kunnen worden. Als er 1 product bekeken is
+wordt de data correct in de lijst aangemaakt. Als alle bekeken producten in de lijst staan worden de recommendations via
+een andere functie (recommendationsAanmaken) aangemaakt.
+"""
 
 
 def andereKochten():
@@ -79,6 +98,11 @@ def andereKochten():
             gekochteProducten.append(x[0][9:len(x[0]) - 3:])
 
     recommendationsAanmaken(gekochteProducten, 2)
+"""
+Deze functie doet precies hetzelfde als andereBekeken, maar is een losse functie omdat de data in deze tabel anders is
+opgeslagen. Er staat namelijk voor elk product 'id:' voor. Dit zorgt er voor dat het splitten anders moet. Ook hier
+worden alle eerder gekochte producten in een lijst gezet om vervolgens recommendations te kunnen maken.
+"""
 
 
 con.commit()
