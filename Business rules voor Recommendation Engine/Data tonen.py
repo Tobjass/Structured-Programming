@@ -33,4 +33,16 @@ def andereBekeken_dataTonen(id):
         print("{}   ({})".format(cur.fetchall()[0][0], x))
 
 
-andereBekeken_dataTonen(input("Product id?\n>> "))
+def andereKochten_dataTonen(id):
+    cur.execute("select name from products where product_id = '{}'".format(id))
+    print("\nEerder gekochte producten die vergelijkbaar zijn met '{}':\n".format(cur.fetchall()[0][0]))
+
+    cur.execute("select anderekochten_id from anderekochten where product_id = '{}'".format(id))
+    anderekochten_id = cur.fetchall()
+
+    for x in anderekochten_id[0][0][1:len(anderekochten_id[0][0]) - 1:].split(','):
+        cur.execute("select name from products where product_id = '{}'".format(x))
+        print("{}   ({})".format(cur.fetchall()[0][0], x))
+
+
+andereKochten_dataTonen(input("Product id?\n>> "))
