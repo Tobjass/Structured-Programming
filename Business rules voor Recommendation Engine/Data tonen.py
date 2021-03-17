@@ -1,4 +1,5 @@
 import psycopg2
+import random
 
 con = psycopg2.connect(
     host="localhost",
@@ -10,12 +11,22 @@ cur = con.cursor()
 
 
 def tonen(id, tekst, ids):
-    cur.execute("select name from products where product_id = '{}'".format(id))
-    print("\n{} die vergelijkbaar zijn met '{}':\n".format(tekst, cur.fetchall()[0][0]))
+    x = ids[0][0][1:len(ids[0][0]) - 1:].split(',')
 
-    for x in ids[0][0][1:len(ids[0][0]) - 1:].split(','):
-        cur.execute("select name from products where product_id = '{}'".format(x))
-        print("{}   ({})".format(cur.fetchall()[0][0], x))
+    cur.execute("select name from products where product_id = '{}'".format(id))
+    print("\n\n{} die vergelijkbaar zijn met '{}' (5/{}):\n".format(tekst, cur.fetchall()[0][0], len(x)))
+
+    oude = []
+    for i in range(0, 5):
+        while True:
+            randomid = random.randrange(0, len(x))
+            if randomid in oude:
+                continue
+            else:
+                oude.append(randomid)
+                break
+        cur.execute("select name from products where product_id = '{}'".format(x[randomid]))
+        print("{}   ({})".format(cur.fetchall()[0][0], x[randomid]))
 
 
 def dataTonen(id):
