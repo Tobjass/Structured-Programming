@@ -52,10 +52,9 @@ def andereBekeken():
 
         aantal += 1
         print("{} / {}   ({:.1f}%)".format(aantal, 13676, aantal * 100 / 13676))
-
-        if type == 1:
-            cur.execute("insert into anderebekeken (product_id, anderebekeken_id) values (%s, %s)",
-                        (producten[0], recommendations))
+        
+        cur.execute("insert into anderebekeken (product_id, anderebekeken_id) values (%s, %s)",
+            (producten[0], recommendations))
 
 
 con.commit()
