@@ -9,40 +9,24 @@ con = psycopg2.connect(
 cur = con.cursor()
 
 
-def soortgelijkProduct_dataTonen(id):
+def dataTonen(type, id):
+    if type == 1:
+        tekst = 'Producten'
+        cur.execute("select soortgelijk_id from soortgelijkproduct where product_id = '{}'".format(id))
+    elif type == 2:
+        tekst = 'Eerder bekeken producten'
+        cur.execute("select anderebekeken_id from anderebekeken where product_id = '{}'".format(id))
+    elif type == 3:
+        tekst = 'Eerder gekochte producten'
+        cur.execute("select anderekochten_id from anderekochten where product_id = '{}'".format(id))
+    ids = cur.fetchall()
+
     cur.execute("select name from products where product_id = '{}'".format(id))
-    print("\nProducten die vergelijkbaar zijn met '{}':\n".format(cur.fetchall()[0][0]))
+    print("\n{} die vergelijkbaar zijn met '{}':\n".format(tekst, cur.fetchall()[0][0]))
 
-    cur.execute("select soortgelijk_id from soortgelijkproduct where product_id = '{}'".format(id))
-    soortgelijk_id = cur.fetchall()
-
-    for x in soortgelijk_id[0][0][1:len(soortgelijk_id[0][0])-1:].split(','):
+    for x in ids[0][0][1:len(ids[0][0])-1:].split(','):
         cur.execute("select name from products where product_id = '{}'".format(x))
         print("{}   ({})".format(cur.fetchall()[0][0], x))
 
 
-def andereBekeken_dataTonen(id):
-    cur.execute("select name from products where product_id = '{}'".format(id))
-    print("\nEerder bekeken producten die vergelijkbaar zijn met '{}':\n".format(cur.fetchall()[0][0]))
-
-    cur.execute("select anderebekeken_id from anderebekeken where product_id = '{}'".format(id))
-    anderebekeken_id = cur.fetchall()
-
-    for x in anderebekeken_id[0][0][1:len(anderebekeken_id[0][0]) - 1:].split(','):
-        cur.execute("select name from products where product_id = '{}'".format(x))
-        print("{}   ({})".format(cur.fetchall()[0][0], x))
-
-
-def andereKochten_dataTonen(id):
-    cur.execute("select name from products where product_id = '{}'".format(id))
-    print("\nEerder gekochte producten die vergelijkbaar zijn met '{}':\n".format(cur.fetchall()[0][0]))
-
-    cur.execute("select anderekochten_id from anderekochten where product_id = '{}'".format(id))
-    anderekochten_id = cur.fetchall()
-
-    for x in anderekochten_id[0][0][1:len(anderekochten_id[0][0]) - 1:].split(','):
-        cur.execute("select name from products where product_id = '{}'".format(x))
-        print("{}   ({})".format(cur.fetchall()[0][0], x))
-
-
-andereKochten_dataTonen(input("Product id?\n>> "))
+dataTonen(3, input("Product id?\n>> "))
