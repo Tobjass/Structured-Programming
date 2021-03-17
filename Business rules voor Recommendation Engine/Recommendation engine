@@ -11,6 +11,7 @@ cur = con.cursor()
 cur.execute("select * from products where sub_sub_category is not null")
 products = cur.fetchall()
 
+
 def soortgelijkProduct():
     aantal = 0
     for producten in products:
