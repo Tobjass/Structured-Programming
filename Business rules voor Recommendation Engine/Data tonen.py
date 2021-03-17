@@ -21,4 +21,16 @@ def soortgelijkProduct_dataTonen(id):
         print("{}   ({})".format(cur.fetchall()[0][0], x))
 
 
-soortgelijkProduct_dataTonen(input("Product id?\n>> "))
+def andereBekeken_dataTonen(id):
+    cur.execute("select name from products where product_id = '{}'".format(id))
+    print("\nEerder bekeken producten die vergelijkbaar zijn met '{}':\n".format(cur.fetchall()[0][0]))
+
+    cur.execute("select anderebekeken_id from anderebekeken where product_id = '{}'".format(id))
+    anderebekeken_id = cur.fetchall()
+
+    for x in anderebekeken_id[0][0][1:len(anderebekeken_id[0][0]) - 1:].split(','):
+        cur.execute("select name from products where product_id = '{}'".format(x))
+        print("{}   ({})".format(cur.fetchall()[0][0], x))
+
+
+andereBekeken_dataTonen(input("Product id?\n>> "))
