@@ -55,23 +55,19 @@ def uploaden(con, client):
         count += 1
         print(count)
 
-        id = str(x['_id'])
         try:
             buid = x['buid'][0] if (len(x['buid']) == 1 and type(x['buid'][0]) is str) else (
                 x['buid'][0][0] if (len(x['buid']) == 1) else (
                     x['buid'] if (type(x['buid'][0]) is str and type(x['buid'][1]) is str) else (
                         [x['buid'][0], x['buid'][1][0]] if (type(x['buid'][0]) is str) else (
-                        [x['buid'][0][0], x['buid'][1]]))))
+                            [x['buid'][0][0], x['buid'][1]]))))
         except:
             buid = None
-        session_start = x['session_start']
-        session_end = x['session_end']
-        has_sale = x['has_sale']
-        order_products = None if (x.get('order') is None or not x['order'].get('products')) else str(x['order'].get('products'))
 
         cur.execute(
             "insert into sessions (session_id, buid, session_start, session_end, has_sale, order_products) values (%s, %s, %s, %s, %s, %s)",
-            (id, buid, session_start, session_end, has_sale, order_products))
+            (str(x['_id']), buid, x['session_start'], x['session_end'], x['has_sale'],
+             None if (x.get('order') is None or not x['order'].get('products')) else str(x['order'].get('products'))))
         con.commit()
         
     client.close()
