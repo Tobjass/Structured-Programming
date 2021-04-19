@@ -17,27 +17,16 @@ def uploaden(con, client):
         count += 1
         print(count)
 
-        id = x['_id']
         try:
             name = x['name']
         except:
             continue
-        brand = x['brand']
-        category = x['category']
-        color = x['color']
-        description = x['description']
-        gender = x['gender']
-        herhaalaankopen = x.get('herhaalaankopen', False)
-        price = x['price']['selling_price'] / 100
-        discount = x['properties'].get('discount')
-        doelgroep = x['properties'].get('doelgroep')
-        sub_category = x.get('sub_category')
-        sub_sub_category = x.get('sub_sub_category')
 
         cur.execute(
             "insert into products (product_id, brand, category, color, description, gender, herhaalaankopen, name, price, discount, doelgroep, sub_category, sub_sub_category) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-            (id, brand, category, color, description, gender, herhaalaankopen, name, price, discount, doelgroep,
-             sub_category, sub_sub_category))
+            (x['_id'], x['brand'], x['category'], x['color'], x['description'], x['gender'],
+             x.get('herhaalaankopen', False), name, x['price']['selling_price'] / 100, x['properties'].get('discount'),
+             x['properties'].get('doelgroep'), x.get('sub_category'), x.get('sub_sub_category')))
 
     profiles = db.profiles
     profilesdata = profiles.find({})
