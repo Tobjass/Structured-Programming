@@ -27,6 +27,7 @@ def uploaden(con, client):
             (x['_id'], x['brand'], x['category'], x['color'], x['description'], x['gender'],
              x.get('herhaalaankopen', False), name, x['price']['selling_price'] / 100, x['properties'].get('discount'),
              x['properties'].get('doelgroep'), x.get('sub_category'), x.get('sub_sub_category')))
+        con.commit()
 
     profiles = db.profiles
     profilesdata = profiles.find({})
@@ -36,15 +37,14 @@ def uploaden(con, client):
         count += 1
         print(count)
 
-        id = str(x['_id'])
-        buids = None if (not x.get('buids')) else x.get('buids')
-        viewed_before = None if (x.get('recommendations') is None or not x['recommendations'].get('viewed_before')) else x['recommendations'].get('viewed_before')
-        similars = None if (x.get('recommendations') is None or not x['recommendations'].get('similars')) else x['recommendations'].get('similars')
-        previously_recommended = None if (not x.get('previously_recommended')) else x.get('previously_recommended')
-
         cur.execute(
             "insert into profiles (profile_id, buids, viewed_before, similars, previously_recommended) values (%s, %s, %s, %s, %s)",
-            (id, buids, viewed_before, similars, previously_recommended))
+            (str(x['_id']), None if (not x.get('buids')) else x.get('buids'),
+             None if (x.get('recommendations') is None or not x['recommendations'].get('viewed_before')) else x[
+                 'recommendations'].get('viewed_before'),
+             None if (x.get('recommendations') is None or not x['recommendations'].get('similars')) else x[
+                 'recommendations'].get('similars'),
+             None if (not x.get('previously_recommended')) else x.get('previously_recommended')))
         con.commit()
 
     sessions = db.sessions
