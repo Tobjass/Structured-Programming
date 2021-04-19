@@ -57,3 +57,12 @@ uploaden(psycopg2.connect(
     user="postgres",
     password=" "
 ), MongoClient('localhost' +':'+ '27017'))
+
+"""
+Uploaden van alle data uit de MongoDB naar de relationele database. Bij het aanroepen van de functie worden de
+connecties meegegeven om globals te vermijden. Eerst worden de cursors voor de relationele database en MongoDB
+aangemaakt. Vervolgens wordt het DDL script uitgevoerd om de 3 tabellen aan te maken. Een overzichtelijkere versie van
+dit script is te vinden in de readme file van dit mapje. De data moet na elkaar geüpload worden om foreign keys mogelijk
+te maken. Bij elke for loop wordt de data uit de MongoDB gehaald, en in de cursor genaamd 'cur' verwerkt en
+doorgestuurd naar de relationele database. Als het uploaden voltooid is worden de connecties gesloten.
+"""
