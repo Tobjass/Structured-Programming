@@ -1,24 +1,10 @@
 import psycopg2
 from pymongo import MongoClient
 
-mongodb_host = 'localhost'
-mongodb_port = '27017'
 
-client = MongoClient(mongodb_host +':'+ mongodb_port)
-db = client['huwebshop']
+def uploaden():
+    cur.execute("DROP TABLE IF EXISTS sessions; DROP TABLE IF EXISTS profiles; DROP TABLE IF EXISTS products; CREATE TABLE products(product_id VARCHAR(29) NOT NULL, brand VARCHAR(27) NULL, category VARCHAR(44) NULL, color VARCHAR(14) NULL, description VARCHAR(1001) NULL, gender VARCHAR(16) NULL, herhaalaankopen BOOLEAN NOT NULL, name VARCHAR(89) NOT NULL, price DECIMAL(6, 2) NOT NULL, discount VARCHAR(12) NULL, doelgroep VARCHAR(15) NULL, sub_category VARCHAR(26) NULL, sub_sub_category VARCHAR(34) NULL, PRIMARY KEY(product_id)); CREATE TABLE profiles(profile_id VARCHAR(25) NOT NULL, buids VARCHAR(10369) NULL, viewed_before VARCHAR(131) NULL, similars VARCHAR(127) NULL, previously_recommended VARCHAR(4295) NULL, product_id VARCHAR(29) NULL, PRIMARY KEY(profile_id), FOREIGN KEY(product_id) REFERENCES products(product_id)); CREATE TABLE sessions(session_id VARCHAR(83) NOT NULL, buid VARCHAR(505), session_start TIMESTAMP NOT NULL, session_end TIMESTAMP NOT NULL, has_sale BOOLEAN NOT NULL, order_products VARCHAR(1051) NULL, product_id VARCHAR(29) NULL, profile_id VARCHAR(25) NULL, PRIMARY KEY(session_id), FOREIGN KEY(product_id) REFERENCES products(product_id), FOREIGN KEY(profile_id) REFERENCES profiles(profile_id))")
 
-con = psycopg2.connect(
-    host="localhost",
-    database="huwebshop",
-    user="postgres",
-    password=" "
-)
-cur = con.cursor()
-
-cur.execute("DROP TABLE IF EXISTS sessions; DROP TABLE IF EXISTS profiles; DROP TABLE IF EXISTS products; CREATE TABLE products(product_id VARCHAR(29) NOT NULL, brand VARCHAR(27) NULL, category VARCHAR(44) NULL, color VARCHAR(14) NULL, description VARCHAR(1001) NULL, gender VARCHAR(16) NULL, herhaalaankopen BOOLEAN NOT NULL, name VARCHAR(89) NOT NULL, price DECIMAL(6, 2) NOT NULL, discount VARCHAR(12) NULL, doelgroep VARCHAR(15) NULL, sub_category VARCHAR(26) NULL, sub_sub_category VARCHAR(34) NULL, PRIMARY KEY(product_id)); CREATE TABLE profiles(profile_id VARCHAR(25) NOT NULL, buids VARCHAR(10369) NULL, viewed_before VARCHAR(131) NULL, similars VARCHAR(127) NULL, previously_recommended VARCHAR(4295) NULL, product_id VARCHAR(29) NULL, PRIMARY KEY(profile_id), FOREIGN KEY(product_id) REFERENCES products(product_id)); CREATE TABLE sessions(session_id VARCHAR(83) NOT NULL, buid VARCHAR(505), session_start TIMESTAMP NOT NULL, session_end TIMESTAMP NOT NULL, has_sale BOOLEAN NOT NULL, order_products VARCHAR(1051) NULL, product_id VARCHAR(29) NULL, profile_id VARCHAR(25) NULL, PRIMARY KEY(session_id), FOREIGN KEY(product_id) REFERENCES products(product_id), FOREIGN KEY(profile_id) REFERENCES profiles(profile_id))")
-
-
-def producten_uploaden():
     products = db.products
     data = products.find({})
 
@@ -65,8 +51,6 @@ def producten_uploaden():
             (id, brand, category, color, description, gender, herhaalaankopen, name, price, discount, doelgroep,
              sub_category, sub_sub_category))
 
-
-def profiles_uploaden():
     profiles = db.profiles
     profilesdata = profiles.find({})
 
@@ -106,8 +90,6 @@ def profiles_uploaden():
             (id, buids, viewed_before, similars, previously_recommended))
         con.commit()
 
-
-def sessions_uploaden():
     sessions = db.sessions
     sessionsdata = sessions.find({})
 
@@ -137,13 +119,15 @@ def sessions_uploaden():
             "insert into sessions (session_id, buid, session_start, session_end, has_sale, order_products) values (%s, %s, %s, %s, %s, %s)",
             (id, buid, session_start, session_end, has_sale, order_products))
         con.commit()
+        
+    client.close()
+    cur.close()
+    con.close()        
 
-
-profiles_uploaden()
-sessions_uploaden()
-
-client.close()
-
-con.commit()
-cur.close()
-con.close()
+        
+uploaden(psycopg2.connect(
+    host="localhost",
+    database="huwebshop",
+    user="postgres",
+    password=" "
+), MongoClient('localhost' +':'+ '27017'))
