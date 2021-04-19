@@ -27,27 +27,12 @@ def uploaden(con, client):
         color = x['color']
         description = x['description']
         gender = x['gender']
-        try:
-            herhaalaankopen = x['herhaalaankopen']
-        except:
-            herhaalaankopen = False
+        herhaalaankopen = x.get('herhaalaankopen', False)
         price = x['price']['selling_price'] / 100
-        try:
-            discount = x['properties']['discount']
-        except:
-            discount = None
-        try:
-            doelgroep = x['properties']['doelgroep']
-        except:
-            doelgroep = None
-        try:
-            sub_category = x['sub_category']
-        except:
-            sub_category = None
-        try:
-            sub_sub_category = x['sub_sub_category']
-        except:
-            sub_sub_category = None
+        discount = x['properties'].get('discount')
+        doelgroep = x['properties'].get('doelgroep')
+        sub_category = x.get('sub_category')
+        sub_sub_category = x.get('sub_sub_category')
 
         cur.execute(
             "insert into products (product_id, brand, category, color, description, gender, herhaalaankopen, name, price, discount, doelgroep, sub_category, sub_sub_category) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
@@ -63,30 +48,10 @@ def uploaden(con, client):
         print(count)
 
         id = str(x['_id'])
-        try:
-            buids = x['buids']
-            if not buids:
-                buids = None
-        except:
-            buids = None
-        try:
-            viewed_before = x['recommendations']['viewed_before']
-            if not viewed_before:
-                viewed_before = None
-        except:
-            viewed_before = None
-        try:
-            similars = x['recommendations']['similars']
-            if not similars:
-                similars = None
-        except:
-            similars = None
-        try:
-            previously_recommended = x['previously_recommended']
-            if not previously_recommended:
-                previously_recommended = None
-        except:
-            previously_recommended = None
+        buids = None if (not x.get('buids')) else x.get('buids')
+        viewed_before = None if (x.get('recommendations') is None or not x['recommendations'].get('viewed_before')) else x['recommendations'].get('viewed_before')
+        similars = None if (x.get('recommendations') is None or not x['recommendations'].get('similars')) else x['recommendations'].get('similars')
+        previously_recommended = None if (not x.get('previously_recommended')) else x.get('previously_recommended')
 
         cur.execute(
             "insert into profiles (profile_id, buids, viewed_before, similars, previously_recommended) values (%s, %s, %s, %s, %s)",
@@ -101,7 +66,7 @@ def uploaden(con, client):
         count += 1
         print(count)
 
-        id = str(x['_id']) if (type(x['_id']) is not str) else x['_id']
+        id = str(x['_id'])
         try:
             buid = x['buid'][0] if (len(x['buid']) == 1 and type(x['buid'][0]) is str) else (
                 x['buid'][0][0] if (len(x['buid']) == 1) else (
@@ -113,10 +78,7 @@ def uploaden(con, client):
         session_start = x['session_start']
         session_end = x['session_end']
         has_sale = x['has_sale']
-        try:
-            order_products = str(x['order']['products'])
-        except:
-            order_products = None
+        order_products = None if (x.get('order') is None or not x['order'].get('products')) else str(x['order'].get('products'))
 
         cur.execute(
             "insert into sessions (session_id, buid, session_start, session_end, has_sale, order_products) values (%s, %s, %s, %s, %s, %s)",
