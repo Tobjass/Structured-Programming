@@ -14,12 +14,11 @@ products = cur.fetchall()
 
 def soortgelijkProduct():
     aantal = 0
-    for producten in products:
-        recommendations = []
         for x in products:
-            if (x[2] == producten[2] and x[5] == producten[5]) and (x[11] == producten[11] and x[12] == producten[12]):
-                recommendations.append(x[0])
-        recommendations.remove(producten[0])
+        recommendations = []
+        for y in products:
+            if x[0] != y[0] and x[1:] == y[1:]:
+                recommendations.append(y[0])
 
         aantal += 1
         print("{} / {}   ({:.1f}%)".format(aantal, 13676, aantal * 100 / 13676))
