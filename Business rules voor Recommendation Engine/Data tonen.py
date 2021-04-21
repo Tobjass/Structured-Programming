@@ -10,7 +10,9 @@ con = psycopg2.connect(
 cur = con.cursor()
 
 
-def tonen(id, tekst, ids):
+def tonen(con, id, tekst, ids):
+    cur = con.cursor()
+
     x = ids[0][0][1:len(ids[0][0]) - 1:].split(',')
 
     cur.execute("select name from products where product_id = '{}'".format(id))
@@ -36,15 +38,17 @@ niet eerder getoond is heeft. Als dit het geval is wordt de naam van het aanbevo
 """
 
 
-def dataTonen(id):
+def dataTonen(con, id):
+    cur = con.cursor()
+
     cur.execute("select soortgelijk_id from soortgelijkproduct where product_id = '{}'".format(id))
-    tonen(id, 'Producten', cur.fetchall())
+    tonen(con, id, 'Producten', cur.fetchall())
 
     cur.execute("select anderebekeken_id from anderebekeken where product_id = '{}'".format(id))
-    tonen(id, 'Eerder bekeken producten', cur.fetchall())
+    tonen(con, id, 'Eerder bekeken producten', cur.fetchall())
 
     cur.execute("select anderekochten_id from anderekochten where product_id = '{}'".format(id))
-    tonen(id, 'Eerder gekochte producten', cur.fetchall())
+    tonen(con, id, 'Eerder gekochte producten', cur.fetchall())
 """
 Laat voor het product wat bekeken wordt recommendations zien 3 soorten recommendations zien; soortgelijke producten,
 wat andere klanten eerder hebben bekeken & wat andere klanten eerder gekocht hebben. Deze functie gaat dus ook elke
@@ -53,4 +57,9 @@ een andere functie (tonen).
 """
 
 
-dataTonen(input("Product id?\n>> "))
+dataTonen(psycopg2.connect(
+    host="localhost",
+    database="huwebshop",
+    user="postgres",
+    password=" "
+), input("Id?\n>> "))
