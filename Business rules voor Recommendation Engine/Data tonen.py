@@ -1,14 +1,6 @@
 import psycopg2
 import random
 
-con = psycopg2.connect(
-    host="localhost",
-    database="MongoDB",
-    user="postgres",
-    password=" "
-)
-cur = con.cursor()
-
 
 def tonen(con, id, tekst, ids):
     cur = con.cursor()
