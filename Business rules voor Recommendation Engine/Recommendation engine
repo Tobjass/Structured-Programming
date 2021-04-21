@@ -1,27 +1,49 @@
 import psycopg2
 
 
-def soortgelijk(con):
+def recommendations(con):
     cur = con.cursor()
-    
-    cur.execute("select * from products where sub_sub_category is not null")
+
+    cur.execute("select product_id, gender, sub_sub_category from products where sub_sub_category is not null and gender is not null")
     products = cur.fetchall()
-    
-    aantal = 0
-        for x in products:
-        recommendations = []
+
+    count = 0
+    test = []
+    for x in products:
+        soortgelijk = []
         for y in products:
             if x[0] != y[0] and x[1:] == y[1:]:
-                recommendations.append(y[0])
+                soortgelijk.append(y[0])
 
-        aantal += 1
-        print("{} / {}   ({:.1f}%)".format(aantal, 13676, aantal * 100 / 13676))
+        cur.execute("select order_products from sessions where order_products LIKE '%{}%'".format(
+            x[0].split("'")[1] if ("'" in x[0]) else x[0]))
 
-        cur.execute("insert into soortgelijkproduct (product_id, soortgelijk_id) values (%s, %s)",
-                    (producten[0], recommendations))
+        samengekocht = []
+        for y in cur.fetchall():
+            if x[0] in y[0] and y[0].count('{') > 1:
+                if 'price' in y[0]:
+                    for z in y[0].split(','):
+                        if z[9:len(z)-1:] in products and z[9:len(z)-1:] != x[0]:
+                            samengekocht.append(z[9:len(z)-1:])
+                else:
+                    for z in y[0][0:len(y[0])-1:].split(','):
+                        if z[9:len(z)-2:] != x[0]:
+                            samengekocht.append(z[9:len(z)-2:])
+
+        cur.execute("insert into sp_opdracht3 (product_id, soortgelijk, samengekocht) values (%s, %s, %s)",
+                    (x[0], None if (not soortgelijk) else soortgelijk, None if (not samengekocht) else soortgelijk))
         con.commit()
+
+        test.append(len(str(samengekocht)))
+        print(len(str(samengekocht)))
+
+        count += 1
+        print(count)
+    print(max(test))
+
+    # con.commit()
     cur.close()
-    con.close()       
+    con.close()
 """
 Producten in dezelfde category, sub_category en sub_sub_category toevoegen aan de database. Per product wordt er gekeken
 welke producten vergelijkbaar zijn. Er loopt een for loop die elk product langs gaat. Als de category,
@@ -29,29 +51,7 @@ sub_category en sub_sub_category gelijk zijn aan het product dat getoond wordt o
 aan de recommendations. Uiteindelijk wordt de data naar de database doorgestuurd.
 """
 
-
-def samengekocht(con):
-    cur = con.cursor()
-    
-    cur.execute("select order_products from sessions where order_products LIKE '%{}%'".format(
-            x[0].split("'")[1] if ("'" in x[0]) else x[0]))
-
-    samengekocht = []
-    for y in cur.fetchall():
-        if x[0] in y[0] and y[0].count('{') > 1:
-            if 'price' in y[0]:
-                for z in y[0].split(','):
-                    if z[9:len(z)-1:] in products and z[9:len(z)-1:] != x[0]:
-                        samengekocht.append(z[9:len(z)-1:])
-            else:
-                for z in y[0][0:len(y[0])-1:].split(','):
-                    if z[9:len(z)-2:] != x[0]:
-                        samengekocht.append(z[9:len(z)-2:])
-    cur.close()
-    con.close()
-
-
-soortgelijk(psycopg2.connect(
+recommendations(psycopg2.connect(
     host="localhost",
     database="huwebshop",
     user="postgres",
