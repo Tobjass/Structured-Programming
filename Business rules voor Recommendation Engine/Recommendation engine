@@ -30,15 +30,16 @@ def recommendations(con):
 
         cur.execute("insert into sp_opdracht3 (product_id, soortgelijk, samengekocht) values (%s, %s, %s)",
                     (x[0], None if (not soortgelijk) else soortgelijk, None if (not samengekocht) else soortgelijk))
-        
+
     con.commit()
     cur.close()
     con.close()
 """
-Producten in dezelfde category, sub_category en sub_sub_category toevoegen aan de database. Per product wordt er gekeken
-welke producten vergelijkbaar zijn. Er loopt een for loop die elk product langs gaat. Als de category,
-sub_category en sub_sub_category gelijk zijn aan het product dat getoond wordt op de 'website' zal het worden toegevoegd
-aan de recommendations. Uiteindelijk wordt de data naar de database doorgestuurd.
+Producten in dezelfde gender en sub_sub_category toevoegen aan de database. Per product wordt er gekeken welke producten 
+vergelijkbaar zijn. Er loopt een for loop die elk product langs gaat. Als de gender en sub_sub_category gelijk zijn aan 
+het product dat getoond wordt op de 'website' zal het worden toegevoegd aan de soortgelijk lijst. Daarna worden alle 
+producten die samen met het product gekocht zijn opgehaald. Vervolgens wordt de data verwerkt en eventueel toegevoegd aan de
+samengekocht lijst. Uiteindelijk wordt de data naar de database doorgestuurd.
 """
 
 recommendations(psycopg2.connect(
