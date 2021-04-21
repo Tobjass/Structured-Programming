@@ -33,75 +33,21 @@ aan de recommendations. Uiteindelijk wordt de data naar de database doorgestuurd
 """
 
 
-def recommendationsAanmaken(productenlijst, type):
-    aantal = 0
-    for producten in products:
-        recommendations = []
-        for x in productenlijst:
-            cur.execute("select * from products where product_id = '{}'".format(x))
-            productenlijst = cur.fetchall()
-            if (producten[2] == productenlijst[0][2] and producten[5] == productenlijst[0][5]) and (
-                    producten[11] == productenlijst[0][11] and producten[12] == productenlijst[0][12]):
-                recommendations.append(x)
+def samengekocht():
+    cur.execute("select order_products from sessions where order_products LIKE '%{}%'".format(
+            x[0].split("'")[1] if ("'" in x[0]) else x[0]))
 
-        aantal += 1
-        print("{} / {}   ({:.1f}%)".format(aantal, 13676, aantal * 100 / 13676))
-
-        if type == 1:
-            cur.execute("insert into anderebekeken (product_id, anderebekeken_id) values (%s, %s)",
-                        (producten[0], recommendations))
-        elif type == 2:
-            cur.execute("insert into anderekochten (product_id, anderekochten_id) values (%s, %s)",
-                        (producten[0], recommendations))
-"""
-Maakt recommendations voor andereBekeken of andereKochten aan. Deze wordt opgeroepen in de functies andereBekeken en 
-andereKochten. Ook hier wordt er per product een recommendation aangemaakt. Er wordt voor elk product dat eerder bekeken
-of gekocht is gekeken of het in dezelfde category, sub_category en sub_sub_category zit. Als dit het geval is wordt het
-aan de recommendations lijst toegevoegd. Uiteindelijk wordt de data naar de database doorgestuurd.
-"""
-
-
-def andereBekeken():
-    cur.execute("select viewed_before from visitors")
-    viewed_before = cur.fetchall()
-    bekekenProducten = []
-    for x in viewed_before:
-        if x[0] is None:
-            continue
-        if ',' in (x[0][1:len(x[0])-1:]):
-            for y in x[0][1:len(x[0])-1:].split(','):
-                bekekenProducten.append(y)
-        else:
-            bekekenProducten.append(x[0][1:len(x[0])-1:])
-
-    recommendationsAanmaken(bekekenProducten, 1)
-"""
-Maakt een lijst met alle eerder bekeken producten. De gegevens staan als strings in tuples in de database. Voor elke
-regel uit de database wordt er gekeken of er meer dan 2 producten bekeken zijn (bevat dan een komma). Als dit het geval
-is wordt de data zo gesplitst dat de ids los van elkaar in de lijst geplaatst kunnen worden. Als er 1 product bekeken is
-wordt de data correct in de lijst aangemaakt. Als alle bekeken producten in de lijst staan worden de recommendations via
-een andere functie (recommendationsAanmaken) aangemaakt.
-"""
-
-
-def andereKochten():
-    cur.execute("select order_products from sessions where has_sale is true and order_products is not null")
-    order_products = cur.fetchall()
-
-    gekochteProducten = []
-    for x in order_products:
-        if ',' in x[0][9:len(x[0]) - 3:]:
-            for y in x[0][0:len(x[0])-1:].split(','):
-                gekochteProducten.append(y[9:len(y)-2:])
-        else:
-            gekochteProducten.append(x[0][9:len(x[0]) - 3:])
-
-    recommendationsAanmaken(gekochteProducten, 2)
-"""
-Deze functie doet precies hetzelfde als andereBekeken, maar is een losse functie omdat de data in deze tabel anders is
-opgeslagen. Er staat namelijk voor elk product 'id:' voor. Dit zorgt er voor dat het splitten anders moet. Ook hier
-worden alle eerder gekochte producten in een lijst gezet om vervolgens recommendations te kunnen maken.
-"""
+        samengekocht = []
+        for y in cur.fetchall():
+            if x[0] in y[0] and y[0].count('{') > 1:
+                if 'price' in y[0]:
+                    for z in y[0].split(','):
+                        if z[9:len(z)-1:] in products and z[9:len(z)-1:] != x[0]:
+                            samengekocht.append(z[9:len(z)-1:])
+                else:
+                    for z in y[0][0:len(y[0])-1:].split(','):
+                        if z[9:len(z)-2:] != x[0]:
+                            samengekocht.append(z[9:len(z)-2:])
 
 
 con.commit()
