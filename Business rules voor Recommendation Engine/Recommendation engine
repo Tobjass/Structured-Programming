@@ -29,7 +29,7 @@ def recommendations(con):
                             samengekocht.append(z[9:len(z)-2:])
 
         cur.execute("insert into sp_opdracht3 (product_id, soortgelijk, samengekocht) values (%s, %s, %s)",
-                    (x[0], None if (not soortgelijk) else soortgelijk, None if (not samengekocht) else soortgelijk))
+                    (x[0], None if (not soortgelijk) else soortgelijk, None if (not samengekocht) else samengekocht))
 
     con.commit()
     cur.close()
