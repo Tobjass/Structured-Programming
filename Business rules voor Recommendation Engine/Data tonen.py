@@ -2,7 +2,7 @@ import psycopg2
 import random
 
 
-def tonen(con, id, tekst, ids):
+def tonen(con, id):
     cur = con.cursor()
 
     x = ids[0][0][1:len(ids[0][0]) - 1:].split(',')
@@ -30,26 +30,7 @@ niet eerder getoond is heeft. Als dit het geval is wordt de naam van het aanbevo
 """
 
 
-def dataTonen(con, id):
-    cur = con.cursor()
-
-    cur.execute("select soortgelijk_id from soortgelijkproduct where product_id = '{}'".format(id))
-    tonen(con, id, 'Producten', cur.fetchall())
-
-    cur.execute("select anderebekeken_id from anderebekeken where product_id = '{}'".format(id))
-    tonen(con, id, 'Eerder bekeken producten', cur.fetchall())
-
-    cur.execute("select anderekochten_id from anderekochten where product_id = '{}'".format(id))
-    tonen(con, id, 'Eerder gekochte producten', cur.fetchall())
-"""
-Laat voor het product wat bekeken wordt recommendations zien 3 soorten recommendations zien; soortgelijke producten,
-wat andere klanten eerder hebben bekeken & wat andere klanten eerder gekocht hebben. Deze functie gaat dus ook elke
-soort 1 voor 1 na. De recommendations van het gegeven product-id worden uit de database gehaald, en doorgestuurd naar
-een andere functie (tonen).
-"""
-
-
-dataTonen(psycopg2.connect(
+tonen(psycopg2.connect(
     host="localhost",
     database="huwebshop",
     user="postgres",
