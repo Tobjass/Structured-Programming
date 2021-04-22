@@ -36,10 +36,10 @@ p = het product uit een sessie is gelijk aan het product wat bekeken wordt, a = 
 ## Werking
 ### Creëren van nieuwe kennis
 Het py-bestand genaamd 'Recommendation engine' maakt recommendations per product in de relationele database aan. Deze recommendations zijn gebaseerd op de bovenstaande regels.
-Dit bestand is bedoeld voor eenmalig gebruik, aangezien de nieuwe data opgeslagen wordt in de relationele database. Hoe deze code precies werkt is terug te vinden in het commentaar van dit bestand.
+Dit bestand is bedoeld voor eenmalig gebruik, aangezien de nieuwe data wordt opgeslagen in de relationele database. Hoe deze code precies werkt is terug te vinden in het commentaar van dit bestand.
 
 ### Data visueel tonen
-Het py-bestand genaamd 'Data tonen' haalt de kennis die is gecreërd door 'Recommendation engine' op. Hoe deze code precies werkt is terug te vinden in het commentaar van dit bestand.
+Het py-bestand genaamd 'Data tonen' haalt de kennis die is gecreëerd door 'Recommendation engine' op. Hoe deze code precies werkt is terug te vinden in het commentaar van dit bestand.
 
 Voorbeelden:
 
