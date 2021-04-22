@@ -1,19 +1,24 @@
 import psycopg2
-import random
 
 
 def meestvoorkomende(data):
-    if len(set(data)) >= 4:
+    if len(set(data)) > 4:
         lijst = []
         for i in range(0, 4):
             meestvoorkomende = max(set(data), key=data.count)
             data = [x for x in data if x != meestvoorkomende]
             lijst.append(meestvoorkomende)
-    elif len(set(data)) != 0:
+    elif 0 < len(set(data)) <= 4:
         lijst = list(set(data))
     elif len(set(data)) == 0:
         lijst = None
     return lijst
+"""
+Bepalen welke product-ids het meest in de meegegeven lijst voorkomen. Als er meer dan 4 verschillende ids zijn, wordt
+eerst het meest voorkomende product bepaald. Vervolgens wordt deze uit de lijst gehaald, en aan de eerder aangemaakte
+lijst toegevoegd. Dit wordt in totaal 4x herhaald. Als het aantal verschillende producten tussen 1 en 4 zit wordt deze
+als set returned. Als de meegegeven lijst leeg is wordt None returned.
+"""
 
 
 def printen(con, data):
@@ -21,6 +26,10 @@ def printen(con, data):
     for x in data:
         cur.execute("select name from products where product_id = '{}'".format(x))
         print("{}   ({})".format(cur.fetchone()[0], x))
+"""
+Printen van de data. Omdat er 2 verschillende datalijsten zijn, is hier een functie voor gemaakt om dubbele code te
+voorkomen. Per product haalt het de naam op, en wordt ie vervolgens geprint.
+"""
 
 
 def tonen(con, id):
@@ -42,11 +51,10 @@ def tonen(con, id):
     cur.close()
     con.close()
 """
-Visueel tonen van de recommendations. Deze wordt opgeroepen in de functie dataTonen. Het splitst eerst de data zodat het
-goed verwerkt kan worden. Vervolgens wordt de naam die bij het product dat bekeken wordt hoort opgehaald. Hierna wordt
-er een lijst aangemaakt die het vorige product wat getoond is te onthouden, en dus niet opnieuw te tonen. Vervolgens
-loopt er een for loop 5 keer. In deze loop bevindt zich een while loop, die blijft lopen totdat het een nieuw id wat
-niet eerder getoond is heeft. Als dit het geval is wordt de naam van het aanbevolen product opgehaald en geprint. 
+Data uit de relationele database halen en tonen. Na het ophalen van de data worden de meestvoorkomende producten in
+soortgelijk en samengekocht bepaald, d.m.v. de functie 'meestvoorkomende'. Vervolgens wordt de naam van het product-id
+wat aan de functie meegegeven is opgehaald, en geprint om de data netjes te tonen. Soortgelijk en samengekocht worden
+d.m.v. de functie 'printen' getoond.
 """
 
 
@@ -55,6 +63,4 @@ tonen(psycopg2.connect(
     database="huwebshop",
     user="postgres",
     password=" "
-), 3540)
-
-# input("Id?\n>> ")
+), input("Id?\n>> "))
