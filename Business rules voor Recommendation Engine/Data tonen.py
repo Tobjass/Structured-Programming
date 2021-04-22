@@ -16,32 +16,29 @@ def meestvoorkomende(data):
     return lijst
 
 
+def printen(con, data):
+    cur = con.cursor()
+    for x in data:
+        cur.execute("select name from products where product_id = '{}'".format(x))
+        print("{}   ({})".format(cur.fetchone()[0], x))
+
+
 def tonen(con, id):
     cur = con.cursor()
 
     cur.execute("select * from sp_opdracht3 where product_id = '{}'".format(id))
     data = cur.fetchone()
 
-    print(data)
+    soortgelijk, samengekocht = meestvoorkomende(data[1].strip('{}').split(',')), meestvoorkomende(
+        data[2].strip('{}').split(','))
 
-    soortgelijk, samengekocht = data[1].strip('{}').split(','), data[2].strip('{}').split(',')
-    
-    # x = ids[0][0][1:len(ids[0][0]) - 1:].split(',')
-    #
-    # cur.execute("select name from products where product_id = '{}'".format(id))
-    # print("\n\n{} die vergelijkbaar zijn met '{}' (5/{}):\n".format(tekst, cur.fetchall()[0][0], len(x)))
-    #
-    # oude = []
-    # for i in range(0, 5):
-    #     while True:
-    #         randomid = random.randrange(0, len(x))
-    #         if randomid in oude:
-    #             continue
-    #         else:
-    #             oude.append(randomid)
-    #             break
-    #     cur.execute("select name from products where product_id = '{}'".format(x[randomid]))
-    #     print("{}   ({})".format(cur.fetchall()[0][0], x[randomid]))
+    cur.execute("select name from products where product_id = '{}'".format(id))
+    name = cur.fetchone()[0]
+    print("Producten die vergelijkbaar zijn met '{}':\n".format(name))
+    printen(con, soortgelijk)
+    print("\n\nProducten die goed combineren met '{}':\n".format(name))
+    printen(con, samengekocht)
+
     cur.close()
     con.close()
 """
