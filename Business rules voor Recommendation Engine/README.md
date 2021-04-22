@@ -34,11 +34,16 @@ p = het product uit een sessie is gelijk aan het product wat bekeken wordt, a = 
 
 
 ## Werking
-De recommendation engine werkt als volgt:
+### Creëren van nieuwe kennis
+Het py-bestand genaamd 'Recommendation engine' maakt recommendations per product in de relationele database aan. Deze recommendations zijn gebaseerd op de bovenstaande regels.
+Dit bestand is bedoeld voor eenmalig gebruik, aangezien de nieuwe data opgeslagen wordt in de relationele database. Hoe deze code precies werkt is terug te vinden in het commentaar van dit bestand.
 
-Eerst worden alle soortgelijke, eerder bekeken en eerder gekochte producten naar de relationele database gestuurd via het py-bestand genaamd 'Recommendation engine'. Hoe dit precies werkt is terug te vinden in het commentaar in het bestand zelf. Dit bestand hoeft maar 1x gebruikt te worden, omdat er per product en soort een recommendation wordt aangemaakt in de database. Vervolgens kan er via het py-bestand genaamd 'Data tonen' opgevraagd worden welke producten aanbevolen worden. Er zal worden gevraagd wat het product-id is, en dan wordt er per soort recommendation 5 producten getoond (als er meer dan 5 aanwezig zijn zullen er 5 random gekozen worden). Op de website gaat dit natuurlijk automatisch; de website stuurt dan naar de code wat het product-id van het product dat bekeken wordt is. Hoe dit bestand precies werkt is terug te vinden in het commentaar
+### Data visueel tonen
+Het py-bestand genaamd 'Data tonen' haalt de kennis die is gecreërd door 'Recommendation engine' op. Hoe deze code precies werkt is terug te vinden in het commentaar van dit bestand.
 
-Screenshots van data tonen:
-![image](https://user-images.githubusercontent.com/74547189/111639331-72f2fc00-87fb-11eb-9ecf-7f3bd3c3e0d8.png)
-![image](https://user-images.githubusercontent.com/74547189/111639554-a59cf480-87fb-11eb-9ed8-8bf3fa7c1aec.png)
-![image](https://user-images.githubusercontent.com/74547189/111640176-396ec080-87fc-11eb-893c-4e4f224e86b8.png)
+Voorbeelden:
+
+![image](https://user-images.githubusercontent.com/74547189/115705814-43409200-a36d-11eb-9b24-47d35e153c9d.png)
+![image](https://user-images.githubusercontent.com/74547189/115705895-60756080-a36d-11eb-9cef-15dc3498cbf4.png)
+![image](https://user-images.githubusercontent.com/74547189/115705974-7551f400-a36d-11eb-811c-153feec71adc.png)
+
