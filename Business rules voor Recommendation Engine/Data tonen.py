@@ -2,6 +2,20 @@ import psycopg2
 import random
 
 
+def meestvoorkomende(data):
+    if len(set(data)) >= 4:
+        lijst = []
+        for i in range(0, 4):
+            meestvoorkomende = max(set(data), key=data.count)
+            data = [x for x in data if x != meestvoorkomende]
+            lijst.append(meestvoorkomende)
+    elif len(set(data)) != 0:
+        lijst = list(set(data))
+    elif len(set(data)) == 0:
+        lijst = None
+    return lijst
+
+
 def tonen(con, id):
     cur = con.cursor()
 
@@ -11,8 +25,7 @@ def tonen(con, id):
     print(data)
 
     soortgelijk, samengekocht = data[1].strip('{}').split(','), data[2].strip('{}').split(',')
-
-
+    
     # x = ids[0][0][1:len(ids[0][0]) - 1:].split(',')
     #
     # cur.execute("select name from products where product_id = '{}'".format(id))
