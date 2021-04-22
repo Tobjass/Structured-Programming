@@ -5,22 +5,32 @@ import random
 def tonen(con, id):
     cur = con.cursor()
 
-    x = ids[0][0][1:len(ids[0][0]) - 1:].split(',')
+    cur.execute("select * from sp_opdracht3 where product_id = '{}'".format(id))
+    data = cur.fetchone()
 
-    cur.execute("select name from products where product_id = '{}'".format(id))
-    print("\n\n{} die vergelijkbaar zijn met '{}' (5/{}):\n".format(tekst, cur.fetchall()[0][0], len(x)))
+    print(data)
 
-    oude = []
-    for i in range(0, 5):
-        while True:
-            randomid = random.randrange(0, len(x))
-            if randomid in oude:
-                continue
-            else:
-                oude.append(randomid)
-                break
-        cur.execute("select name from products where product_id = '{}'".format(x[randomid]))
-        print("{}   ({})".format(cur.fetchall()[0][0], x[randomid]))
+    soortgelijk, samengekocht = data[1].strip('{}').split(','), data[2].strip('{}').split(',')
+
+
+    # x = ids[0][0][1:len(ids[0][0]) - 1:].split(',')
+    #
+    # cur.execute("select name from products where product_id = '{}'".format(id))
+    # print("\n\n{} die vergelijkbaar zijn met '{}' (5/{}):\n".format(tekst, cur.fetchall()[0][0], len(x)))
+    #
+    # oude = []
+    # for i in range(0, 5):
+    #     while True:
+    #         randomid = random.randrange(0, len(x))
+    #         if randomid in oude:
+    #             continue
+    #         else:
+    #             oude.append(randomid)
+    #             break
+    #     cur.execute("select name from products where product_id = '{}'".format(x[randomid]))
+    #     print("{}   ({})".format(cur.fetchall()[0][0], x[randomid]))
+    cur.close()
+    con.close()
 """
 Visueel tonen van de recommendations. Deze wordt opgeroepen in de functie dataTonen. Het splitst eerst de data zodat het
 goed verwerkt kan worden. Vervolgens wordt de naam die bij het product dat bekeken wordt hoort opgehaald. Hierna wordt
@@ -35,4 +45,6 @@ tonen(psycopg2.connect(
     database="huwebshop",
     user="postgres",
     password=" "
-), input("Id?\n>> "))
+), 3540)
+
+# input("Id?\n>> ")
